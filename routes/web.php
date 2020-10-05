@@ -20,5 +20,5 @@ Route::get('/', 'HomeController@index');
 
 // Les routes protégées
 Route::group(['middleware' => ['auth']], function() {
-   
+    Route::resource('Composition', 'CompositionController');
 });

@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.main')
 @section('content')
 <div class="col-md-9 well well-md">
     <center><h1>Changer de mot de passe</h1></center>
@@ -8,9 +8,9 @@
     </div>
     @endif
     <form method="POST" action="{{ route('password.update') }}">
-        @csrf        
+        @csrf
         <input type="hidden" name="token" value="{{ $token }}">
-        <div class="form-horizontal">    
+        <div class="form-horizontal">
             <div class="form-group">
                 <label class="col-md-3 control-label">Adresse courriel : </label>
                 <div class="col-md-3 ">
@@ -38,15 +38,15 @@
                 <div class="col-md-3 ">
                     <input id="password-confirm" type="password" class="form-control @error('password') is-invalid @enderror" name="password_confirmation"  required autocomplete="new-password">
                 </div>
-            </div>             
+            </div>
             <div class="form-group">
                 <div class="col-md-6 col-md-offset-3">
-                    <button type="submit" class="btn btn-default btn-primary"><span class="glyphicon glyphicon-log-in"></span> Valider</button>              
+                    <button type="submit" class="btn btn-default btn-primary"><span class="glyphicon glyphicon-log-in"></span> Valider</button>
                 </div>
             </div>
 
         </div>
-    </form>        
+    </form>
 </div>
 
 @stop

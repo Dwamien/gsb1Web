@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.main')
 @section('content')
 <div>
     <h1 class="bvn"> Bienvenue sur GSB ! </h1>

@@ -22,10 +22,13 @@
                             <span class="icon-bar"></span>
                             <span class="icon-bar+ bvn"></span>
                         </button>
-                        <a class="navbar-brand" href="{{ url('/') }}">Gsb</a>
+                        <a class="navbar-brand" href="{{ url('/') }}" style="padding-right:135px">GSB</a>
                     </div>
 
                     <div class="collapse navbar-collapse" id="navbar-collapse-target">
+                        <ul class="nav navbar-nav">
+                            <li><a href="{{ route('Composition.index') }}" data-toggle="collapse" data-target=".navbar-collapse.in">Gestion des compositions</a></li>
+                        </ul>
                         @guest
                         <ul class="nav navbar-nav navbar-right">
                             <li><a href="{{ url('/login') }}" data-toggle="collapse" data-target=".navbar-collapse.in">Se connecter</a></li>
