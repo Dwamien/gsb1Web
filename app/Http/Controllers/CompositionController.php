@@ -45,7 +45,7 @@ class CompositionController extends Controller
      */
     public function show($id)
     {
-        //
+        return view('composition.show');
     }
 
     /**

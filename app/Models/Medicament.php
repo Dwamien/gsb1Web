@@ -14,4 +14,8 @@ class Medicament extends Model
     public function composants(){
         return $this->belongsToMany('App\Models\Composant', 'App\Models\Constituer', 'id_medicament','id_composant')->withPivot('qte_composant');
     }
+
+    public function famille(){
+        return $this->belongsTo('App\Models\Famille', 'id_famille', 'id_famille');
+    }
 }

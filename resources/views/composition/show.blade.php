@@ -12,18 +12,12 @@
                         <tr>
                             <th>Nom commercial</th>
                             <th>Dépôt légal</th>
-                            <th>Famille</th>
                             <th>Nom du composant</th>
                             <th>Quantité</th>
-                            <th>Modifier</th>
-                            <th>Supprimer</th>
                         </tr>
                     </thead>
                     <tboby>
                         <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
                             <td></td>
                             <td></td>
                             <td></td>
