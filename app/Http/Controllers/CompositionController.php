@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Medicament;
+use App\Models\Famille;
 
 class CompositionController extends Controller
 {
@@ -13,7 +15,8 @@ class CompositionController extends Controller
      */
     public function index()
     {
-        return view('composition.index');
+        return view('composition.index')->with('medicaments', Medicament::all())
+                                        ->with('familles', Famille::all());
     }
 
     /**
@@ -21,9 +24,10 @@ class CompositionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($id)
     {
-        //
+        $medicament = Medicament::find($id);
+        return view('composition.create')->with('medicament', $medicament);
     }
 
     /**
@@ -45,7 +49,10 @@ class CompositionController extends Controller
      */
     public function show($id)
     {
-        return view('composition.show');
+        $medicaments = Medicament::all();
+        $medicament = Medicament::find($id);
+        return view('composition.show')->with('allMedicaments', $medicaments)
+                                       ->with('medicament', $medicament);
     }
 
     /**

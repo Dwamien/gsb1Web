@@ -18,7 +18,9 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/', 'HomeController@index');
 
 
+
 // Les routes protégées
 Route::group(['middleware' => ['auth']], function() {
     Route::resource('Composition', 'CompositionController');
+        Route::get('Composition/create/{id}', 'CompositionController@create')->name('Composition.create');
 });

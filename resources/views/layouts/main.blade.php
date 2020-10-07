@@ -4,7 +4,13 @@
         <link href="{{ asset('assets/css/bootstrap.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/css/gsb.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/css/bootstrap-theme.css') }}" rel="stylesheet">
+        <link href="{{ asset('assets/css/select2.min.css') }}" rel="stylesheet">
+
+        <!-- CSRF Token -->
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+
         <!-- Scripts -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
         <!-- Fonts -->
         <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -55,7 +61,6 @@
         <div class="container">
             @yield('content')
         </div>
-        <script src="{{ asset('assets/js/jquery-2.1.3.min.js') }}" defer></script>
-        <script src="{{ asset('assets/js/bootstrap.js') }}" defer></script>
+        @yield('scripts')
     </body>
 </html>
