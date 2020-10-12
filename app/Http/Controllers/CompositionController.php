@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Medicament;
 use App\Models\Famille;
+use App\Models\Composant;
 
 class CompositionController extends Controller
 {
@@ -27,7 +28,15 @@ class CompositionController extends Controller
     public function create($id)
     {
         $medicament = Medicament::find($id);
-        return view('composition.create')->with('medicament', $medicament);
+        $allreadyComp = [];
+
+        foreach($medicament->composants as $composant){
+            $allreadyComp[] = $composant->id_composant;
+        }
+
+        return view('composition.create')->with('medicament', $medicament)
+                                         ->with('composants', Composant::all())
+                                         ->with('allreadyComp', $allreadyComp);
     }
 
     /**
@@ -38,7 +47,21 @@ class CompositionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $destination = $request->choixValidation;
+
+        $medicament = Medicament::find($request->id_medicament);
+
+        $composant = Composant::find($request->selectCompo);
+
+        $qte = $request->qte;
+
+        $medicament->composants()->save($composant, ['qte_composant'=>$qte]);
+
+        if($destination == 1){
+            return redirect(route('Composition.show', $request->id_medicament));
+        }else{
+            return redirect(route('Composition.create', $request->id_medicament));
+        }
     }
 
     /**
@@ -63,7 +86,16 @@ class CompositionController extends Controller
      */
     public function edit($id)
     {
-        //
+        $medicament = Medicament::find($id);
+        $allreadyComp = [];
+
+        foreach($medicament->composants as $composant){
+            $allreadyComp[] = $composant->id_composant;
+        }
+
+        return view('composition.edit')->with('medicament', $medicament)
+                                         ->with('composants', Composant::all())
+                                         ->with('allreadyComp', $allreadyComp);
     }
 
     /**
@@ -75,7 +107,24 @@ class CompositionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $medicament = Medicament::find($id);
+
+        $toSave = [];
+
+        foreach($medicament->composants as $composant){
+            $idComp = $request->input('nom'.$composant->id_composant);
+            $qte = $request->input('qte'.$composant->id_composant);
+            $toSave[$idComp] = $qte;
+        }
+
+        $medicament->composants()->detach();
+
+        foreach($toSave as $idComp => $qteComp){
+            $composant = Composant::find($idComp);
+            $medicament->composants()->save($composant,['qte_composant'=>$qteComp]);
+        }
+
+        return redirect(route('Composition.show', $id));
     }
 
     /**
@@ -84,8 +133,13 @@ class CompositionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        //
+        $medicament = Medicament::find($request->id_medicament);
+        $composant = Composant::find($id);
+
+        $medicament->composants()->detach($id);
+
+        return redirect(route('Composition.show', $request->id_medicament));
     }
 }

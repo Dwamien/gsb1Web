@@ -26,7 +26,7 @@
 
                 <div class="form-group">
                     <label for="searchFam">Rechercher par famille : </label>
-                    <select name="searchFam" id="searchFam" style="width:200px" onchange="recupId()">
+                    <select name="searchFam" id="searchFam" style="width:200px" onchange="">
                         <option value="0">Sélectionner une famille : </option>
                         @foreach($familles as $famille)
                         <option value="{{ $famille->id_famille }}"> {{ $famille->lib_famille }} </option>

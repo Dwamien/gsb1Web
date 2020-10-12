@@ -44,7 +44,7 @@
                             <td>{{ $composant->lib_composant}}</td>
                             <td>{{ $composant->pivot->qte_composant}}</td>
                             <td style="text-align:center">
-                                <a class="glyphicon glyphicon-pencil" href="{{ route('Composition.edit', $composant->id_composant) }}" data-toggle="tooltip" data-placement="top" title="Modifier"></a>
+                                <a class="glyphicon glyphicon-pencil" href="{{ route('Composition.edit', $medicament->id_medicament) }}" data-toggle="tooltip" data-placement="top" title="Modifier"></a>
                             </td>
                             <td style="text-align:center">
                                 <a class="glyphicon glyphicon-trash" data-target="#deleteModal" data-toggle="modal" onclick="deleteData({{$composant->id_composant}})" href="#" >
@@ -52,27 +52,6 @@
                             </td>
                         </tr>
                         @endforeach
-                        <!-- Modal pour confirmer la suppression -->
-                        <div class="modal" id="deleteModal">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content">
-                                    <form id="deleteForm" action="" method="POST">
-                                        @csrf
-                                        @method('delete')
-                                        <div class="modal-header">
-                                            <h4 class="modal-title">Attention : la suppression est définitive.</h4>
-                                        </div>
-                                        <div class="modal-body">
-                                            Voulez-vous vraiment supprimer ce composant ?
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-success" data-dismiss="modal" onclick="formSubmit()">Oui</button>
-                                            <button type="button" class="btn btn-danger" data-dismiss="modal">Annuler</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
                         @else
                         <tr>
                             <td>{{ $medicament->nom_commercial}}</td>
@@ -81,6 +60,28 @@
                         </tr>
                         @endif
                     </tboby>
+                    <!-- Modal pour confirmer la suppression -->
+                    <div class="modal" id="deleteModal">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <form id="deleteForm" action="" method="POST">
+                                    <input type="hidden" name="id_medicament" value="{{ $medicament->id_medicament }}">
+                                    @csrf
+                                    @method('delete')
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Attention : la suppression est définitive.</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        Voulez-vous vraiment supprimer ce composant ?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-success" data-dismiss="modal" onclick="formSubmit()">Oui</button>
+                                        <button type="button" class="btn btn-danger" data-dismiss="modal">Annuler</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </table>
             </div>
         </div>
@@ -96,6 +97,7 @@
 @endsection
 
 @section('scripts')
+    <script src="{{ asset('js/app.js') }}"></script>
     <script src="{{ asset('assets/js/select2.min.js') }}"></script>
     <script type="text/javascript">
         $("#searchName").select2( {
@@ -123,7 +125,7 @@
         function deleteData(id) {
             var uri = "{{ route('Composition.destroy', 'id')}}";
             uri = uri.replace('id',id);
-            $("#deleteForm").attr('action', url);
+            $("#deleteForm").attr('action', uri);
         };
 
         function formSubmit()
