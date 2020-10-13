@@ -7,37 +7,66 @@
         </div>
 
         <div class="card-body">
-            <div class="row" style="display:flex">
-                <div class="form-group">
-                    <label for="searchName">Rechercher par nom : </label>
-                    <select name="searchName" id="searchName" style="width:200px" onchange="recupId()">
-                        <option value="0">Sélectionner un nom : </option>
-                        @foreach($medicaments as $medicament)
-                        <option value="{{ $medicament->id_medicament }}"> {{ $medicament->nom_commercial }} </option>
-                        @endforeach
-                    </select>
-
-                    <a href="" id="uriGoShow">
-                        <button type="button" class="btn btn-default btn-sm" id="btnGoShow" disabled>
-                        <span class="glyphicon glyphicon-search"></span>
-                        </button>
-                    </a>
+            <div class="row search" style="display:flex">
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="searchName">Rechercher par nom : </label>
+                        </div>
+                        <div class="col-md-8" style="padding-left:0px">
+                            <form action="" method="GET" id="validNom">
+                                <select name="searchName" id="searchName" style="width:200px" onchange="subIdMed()">
+                                        <option value="0">Sélectionner un nom : </option>
+                                        @foreach($medicaments as $medicament)
+                                        <option value="{{ $medicament->id_medicament }}"> {{ $medicament->nom_commercial }} </option>
+                                        @endforeach
+                                </select>
+                            </form>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="searchFam">Rechercher par famille : </label>
-                    <select name="searchFam" id="searchFam" style="width:200px" onchange="">
-                        <option value="0">Sélectionner une famille : </option>
-                        @foreach($familles as $famille)
-                        <option value="{{ $famille->id_famille }}"> {{ $famille->lib_famille }} </option>
-                        @endforeach
-                    </select>
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="searchFam">Rechercher par famille : </label>
+                            @if($choixIdFam > 0)
+                                @if($choixFam->medicaments()->count() > 0)
+                                <label for="searchFam" style="padding-top:10px">Sélectionner un médicament : </label>
+                                @endif
+                            @endif
+                        </div>
+                        <div class="col-md-8">
+                            <form action="{{route('Composition.index')}}" method="GET" id="validFam">
+                                <select name="searchFam" id="searchFam" style="width:200px" onchange="subIdFam()">
+                                    @if($choixIdFam == 0)
+                                    <option value="0">Sélectionner une famille : </option>
+                                    @else
+                                    <option value="{{$choixIdFam}}">{{$choixFam->lib_famille}}</option>
+                                    @endif
+                                    @foreach($familles as $famille)
+                                    <option value="{{ $famille->id_famille }}"> {{ $famille->lib_famille }} </option>
+                                    @endforeach
+                                </select>
+                                <input type="hidden" id="idFam" name="idFam" value="">
+                            </form>
 
-                    <a href="" id="uriGoShow">
-                        <button type="button" class="btn btn-default btn-sm" id="btnGoShow" disabled>
-                        <span class="glyphicon glyphicon-search"></span>
-                        </button>
-                    </a>
+                            @if($choixIdFam > 0)
+                                @if($choixFam->medicaments()->count() > 0)
+                                <form action="" method="GET" id="validNomParFam" style="padding-top:15px">
+                                    <select name="searchNameByFam" id="searchNameByFam" style="width:200px" onchange="subIdMedByFam()">
+                                        <option value="0">Sélectionner un nom : </option>
+                                        @foreach($medicaments->where('id_famille', $choixIdFam) as $medicament)
+                                        <option value="{{ $medicament->id_medicament }}"> {{ $medicament->nom_commercial }} </option>
+                                        @endforeach
+                                    </select>
+                                </form>
+                                @else
+                                    <div style="padding-top:15px"><i>Il n'y a pas de médicament de cette famille</i></div>
+                                @endif
+                            @endif
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -57,22 +86,35 @@
 
         $("#searchFam").select2();
 
-        function recupId(){
-            var recupId = document.getElementById("searchName").value;
-            var bt = document.getElementById("btnGoShow");
+        $("#searchNameByFam").select2();
+
+        function subIdMed(){
+            var idMed = document.getElementById("searchName").value;
             var uri = "{{ route('Composition.show', 'id') }}";
 
-            if(recupId != 0){
-                bt.disabled = false;
-                bt.setAttribute("class", "btn btn-success btn-sm");
-                uri = uri.replace('id', recupId);
-                $("#uriGoShow").attr("href", uri);
-            }else{
-                bt.disabled = true;
-                bt.setAttribute("class", "btn btn-default btn-sm")
-            }
+            if(idMed != 0){
+                uri = uri.replace('id', idMed);
+                $("#validNom").attr("action", uri);
+                $("#validNom").submit();
+                }
+        };
 
-            $("#test").attr("href", recupId);
-        }
+        function subIdFam(){
+            var idFam = document.getElementById("searchFam").value;
+            $('#idFam').attr('value', idFam);
+            $('#validFam').submit();
+        };
+
+        function subIdMedByFam(){
+            var idMed = document.getElementById("searchNameByFam").value;
+            var uri = "{{ route('Composition.show', 'id') }}";
+
+            if(idMed != 0){
+                uri = uri.replace('id', idMed);
+                $("#validNomParFam").attr("action", uri);
+                $("#validNomParFam").submit();
+            }
+        };
     </script>
+
 @endsection

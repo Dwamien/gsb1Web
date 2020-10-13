@@ -14,10 +14,20 @@ class CompositionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        if($request->idFam == null){
+            $choixIdFam = 0;
+            $choixFam = null;
+        }else{
+            $choixIdFam = $request->idFam;
+            $choixFam = Famille::find($choixIdFam);
+        }
+
         return view('composition.index')->with('medicaments', Medicament::all())
-                                        ->with('familles', Famille::all());
+                                        ->with('familles', Famille::all())
+                                        ->with('choixIdFam', $choixIdFam)
+                                        ->with('choixFam', $choixFam);
     }
 
     /**
@@ -70,12 +80,23 @@ class CompositionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
+        if($request->idFam == null){
+            $choixIdFam = 0;
+            $choixFam = null;
+        }else{
+            $choixIdFam = $request->idFam;
+            $choixFam = Famille::find($choixIdFam);
+        }
+
         $medicaments = Medicament::all();
         $medicament = Medicament::find($id);
-        return view('composition.show')->with('allMedicaments', $medicaments)
-                                       ->with('medicament', $medicament);
+        return view('composition.show') ->with('allMedicaments', $medicaments)
+                                        ->with('medicament', $medicament)
+                                        ->with('familles', Famille::all())
+                                        ->with('choixIdFam', $choixIdFam)
+                                        ->with('choixFam', $choixFam);
     }
 
     /**
