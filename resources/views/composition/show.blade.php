@@ -77,8 +77,10 @@
                             <th>Nom du composant</th>
                             @if($medicament->composants->count() >= 1)
                             <th>Quantité</th>
+                            @can('admin')
                             <th>Modifier</th>
                             <th>Supprimer</th>
+                            @endcan
                             @endif
                         </tr>
                     </thead>
@@ -90,6 +92,7 @@
                             <td class="cache">{{ $medicament->depot_legal}}</td>
                             <td>{{ $composant->lib_composant}}</td>
                             <td>{{ $composant->pivot->qte_composant}}</td>
+                            @can('admin')
                             <td style="text-align:center">
                                 <a class="glyphicon glyphicon-pencil" href="{{ route('Composition.edit', $medicament->id_medicament) }}" data-toggle="tooltip" data-placement="top" title="Modifier"></a>
                             </td>
@@ -97,6 +100,7 @@
                                 <a class="glyphicon glyphicon-trash" data-target="#deleteModal" data-toggle="modal" onclick="deleteData({{$composant->id_composant}})" href="#" >
                                 </a>
                             </td>
+                            @endcan
                         </tr>
                         @endforeach
                         @else
@@ -133,6 +137,7 @@
             </div>
         </div>
 
+        @can('admin')
         <div class="card-footer">
             <div class="row" style="padding-right:15px">
                 <a href="{{ route('Composition.create', $medicament->id_medicament) }}"  class="btn  btn-success pull-right">
@@ -140,6 +145,8 @@
                 </a>
             </div>
         </div>
+        @endcan
+
     </div>
 @endsection
 

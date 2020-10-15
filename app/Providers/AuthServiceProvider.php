@@ -19,7 +19,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        
+
     ];
 
     /**
@@ -29,6 +29,14 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->registerPolicies();        
+        $this->registerPolicies();
+
+        Gate::define('admin', function($user){
+            return $user->role == 'Administrateur';
+        });
+
+        Gate::define('compose', function($user){
+            return $user->role == 'Administrateur' ||  $user->role == 'Visiteur' || $user->role == 'Praticien';
+        });
     }
 }

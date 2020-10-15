@@ -18,4 +18,14 @@ class Medicament extends Model
     public function famille(){
         return $this->belongsTo('App\Models\Famille', 'id_famille', 'id_famille');
     }
+
+    public function listComp(){
+        $allreadyComp = [];
+
+        foreach($this->composants as $composant){
+            $allreadyComp[] = $composant->id_composant;
+        }
+
+        return $allreadyComp;
+    }
 }

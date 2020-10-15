@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Medicament;
 use App\Models\Famille;
 use App\Models\Composant;
+use App\Http\Requests\StoreCompositionRequest;
+use Exception;
 
 class CompositionController extends Controller
 {
@@ -38,11 +40,7 @@ class CompositionController extends Controller
     public function create($id)
     {
         $medicament = Medicament::find($id);
-        $allreadyComp = [];
-
-        foreach($medicament->composants as $composant){
-            $allreadyComp[] = $composant->id_composant;
-        }
+        $allreadyComp = $medicament->listComp();
 
         return view('composition.create')->with('medicament', $medicament)
                                          ->with('composants', Composant::all())
@@ -55,22 +53,31 @@ class CompositionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreCompositionRequest $request)
     {
-        $destination = $request->choixValidation;
+        try{
+            $destination = $request->choixValidation;
+            $medicament = Medicament::find($request->id_medicament);
+            $composant = Composant::find($request->selectCompo);
+            $qte = $request->qte;
 
-        $medicament = Medicament::find($request->id_medicament);
+            $medicament->composants()->save($composant, ['qte_composant'=>$qte]);
 
-        $composant = Composant::find($request->selectCompo);
+            if($destination == 1){
+                return redirect(route('Composition.show', $request->id_medicament));
+            }else{
+                return redirect(route('Composition.create', $request->id_medicament));
+            }
+        }catch(Exception $ex){
+            $message = $ex->getMessage();
+            $allreadyComp = $medicament->listComp();
 
-        $qte = $request->qte;
+            session()->flash('error', "Echec de l'ajout du composant. Si le problème persiste, veuillez contacter le webmestre et préciser le code erreur : <br> <br>".$message);
+            return redirect(route('Composition.create', $request->id_medicament))   ->withInput()
+                                                                                    ->with('medicament', $medicament)
+                                                                                    ->with('composants', Composant::all())
+                                                                                    ->with('allreadyComp', $allreadyComp);
 
-        $medicament->composants()->save($composant, ['qte_composant'=>$qte]);
-
-        if($destination == 1){
-            return redirect(route('Composition.show', $request->id_medicament));
-        }else{
-            return redirect(route('Composition.create', $request->id_medicament));
         }
     }
 
@@ -108,15 +115,11 @@ class CompositionController extends Controller
     public function edit($id)
     {
         $medicament = Medicament::find($id);
-        $allreadyComp = [];
+        $allreadyComp = $medicament->listComp();
 
-        foreach($medicament->composants as $composant){
-            $allreadyComp[] = $composant->id_composant;
-        }
-
-        return view('composition.edit')->with('medicament', $medicament)
-                                         ->with('composants', Composant::all())
-                                         ->with('allreadyComp', $allreadyComp);
+        return view('composition.edit') ->with('medicament', $medicament)
+                                        ->with('composants', Composant::all())
+                                        ->with('allreadyComp', $allreadyComp);
     }
 
     /**
@@ -129,23 +132,40 @@ class CompositionController extends Controller
     public function update(Request $request, $id)
     {
         $medicament = Medicament::find($id);
+        try{
+            $toSave = [];
 
-        $toSave = [];
+            foreach($medicament->composants as $composant){
+                $idComp = $request->input('nom'.$composant->id_composant);
+                $qte = $request->input('qte'.$composant->id_composant);
+                $toSave[$idComp] = $qte;
+            }
 
-        foreach($medicament->composants as $composant){
-            $idComp = $request->input('nom'.$composant->id_composant);
-            $qte = $request->input('qte'.$composant->id_composant);
-            $toSave[$idComp] = $qte;
+            $medicament->composants()->detach();
+
+            foreach($toSave as $idComp => $qteComp){
+                $composant = Composant::find($idComp);
+                $medicament->composants()->save($composant,['qte_composant'=>$qteComp]);
+            }
+
+            return redirect(route('Composition.show', $id));
+        }catch(Exception $ex){
+            $message = $ex->message;
+            $allreadyComp = $medicament->listComp();
+
+            foreach($medicament->composants as $composant){
+                $allreadyComp[] = $composant->id_composant;
+            }
+
+            session()->flash('error', "Echec de la modification du composant. Si le problème persiste, veuillez contacter le webmestre et préciser le code erreur : <br> <br>".$message);
+
+            return view('composition.edit') ->withinput()
+                                            ->with('medicament', $medicament)
+                                            ->with('composants', Composant::all())
+                                            ->with('allreadyComp', $allreadyComp);
+
         }
 
-        $medicament->composants()->detach();
-
-        foreach($toSave as $idComp => $qteComp){
-            $composant = Composant::find($idComp);
-            $medicament->composants()->save($composant,['qte_composant'=>$qteComp]);
-        }
-
-        return redirect(route('Composition.show', $id));
     }
 
     /**

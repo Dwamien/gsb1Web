@@ -1,9 +1,14 @@
 @extends('layouts.main')
 
 @section('content')
+@if (session()->has('error'))
+    <div class="alert alert-danger">
+        {!! session('error') !!}
+    </div>
+@endif
 <div class="card card-default">
         <div class="card-header nav justify-content-center">
-            <h1>Ajouter un composant</h1>
+            <h1 style="padding-bottom:20px">Ajouter un composant</h1>
         </div>
         <form action="{{ route('Composition.store') }}" method="POST" id="form">
         @csrf
@@ -40,8 +45,8 @@
                                 <td></td>
                                 <td></td>
                                 <td>
-                                    <select name="selectCompo" id="selectCompo" style="width:200px">
-                                        <option value="0">Sélectionner un composant</option>
+                                    <select name="selectCompo" id="selectCompo" style="width:200px" onchange="activBtns()">
+                                        <option value="0" id="opt">Sélectionner un composant</option>
                                         @foreach($composants as $composant)
                                             {{-- on affiche uniquement les composants que le médicament ne contient pas --}}
                                             @if(!in_array($composant->id_composant, $allreadyComp))
@@ -51,7 +56,10 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <input type="text" name="qte" placeholder="Indiquer la quantité" style="width:130px; height:27.27px">
+                                    <input type="text" name="qte" placeholder="Indiquer la quantité" style="width:130px; height:27.27px" required>
+                                    @error('qte')
+                                    <div class="alert alert-danger">{{ $message }}</div>
+                                    @enderror
                                 </td>
                             </tr>
                         </tboby>
@@ -64,10 +72,10 @@
 
             <div class="card-footer"></div>
                 <div class="row" style="padding-right:15px">
-                    <button type="submit"  class="btn  btn-success pull-right" style="margin-left:20px" onclick="formSubmit1()">
+                    <button type="submit"  class="btn  btn-default pull-right" style="margin-left:20px" onclick="formSubmit1()" id="sub1" disabled>
                     Valider et revenir à la page précédente
                     </button>
-                    <button type="submit"  class="btn  btn-primary pull-right" style="margin-left:20px" onclick="formSubmit2()">
+                    <button type="submit"  class="btn  btn-default pull-right" style="margin-left:20px" onclick="formSubmit2()" id="sub2" disabled>
                     Valider et ajouter un autre composant
                     </button>
                     <a href="{{ route('Composition.show', $medicament->id_medicament) }}"  class="btn  btn-danger pull-right" style="height:33.07px">
@@ -95,6 +103,24 @@
 
         function formSubmit2(){
             $("#choixValidation").attr("value",2);
+        }
+
+        function activBtns(){
+            var recupId = document.getElementById("selectCompo").value;
+            var bt1 = document.getElementById("sub1");
+            var bt2 = document.getElementById("sub2");
+            var opt = document.getElementById("select2-selectCompo-container").title;
+            if(opt !="Sélectionner un composant"){
+                bt1.disabled = false;
+                bt2.disabled = false;
+                bt1.setAttribute("class", "btn  btn-success pull-right");
+                bt2.setAttribute("class", "btn  btn-primary pull-right");
+            }else{
+                bt1.disabled = true;
+                bt2.disabled = true;
+                bt1.setAttribute("class", "btn  btn-default pull-right");
+                bt2.setAttribute("class", "btn  btn-default pull-right");
+            }
         }
     </script>
 @endsection

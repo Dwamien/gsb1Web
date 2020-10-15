@@ -32,9 +32,13 @@
                     </div>
 
                     <div class="collapse navbar-collapse" id="navbar-collapse-target">
+                        @auth
+                        @can('compose')
                         <ul class="nav navbar-nav">
                             <li><a href="{{ route('Composition.index') }}" data-toggle="collapse" data-target=".navbar-collapse.in">Gestion des compositions</a></li>
                         </ul>
+                        @endcan
+                        @endauth
                         @guest
                         <ul class="nav navbar-nav navbar-right">
                             <li><a href="{{ url('/login') }}" data-toggle="collapse" data-target=".navbar-collapse.in">Se connecter</a></li>

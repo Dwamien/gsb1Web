@@ -1,9 +1,14 @@
 @extends('layouts.main')
 
 @section('content')
+@if (session()->has('error'))
+    <div class="alert alert-danger">
+        {!! session('error') !!}
+    </div>
+@endif
 <div class="card card-default">
         <div class="card-header nav justify-content-center">
-            <h1>Modifier une composition</h1>
+            <h1 style="padding-bottom:20px">Modifier une composition</h1>
         </div>
         <form action="{{ route('Composition.update', $medicament->id_medicament) }}" method="POST" id="form">
         @csrf
@@ -38,7 +43,7 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <input type="text" name="qte{{$composant->id_composant}}" value="{{ $composant->pivot->qte_composant}}" style="width:50px">
+                                    <input type="text" name="qte{{$composant->id_composant}}" value="{{ $composant->pivot->qte_composant}}" style="width:50px" required>
                                 </td>
                             </tr>
                             @endforeach
